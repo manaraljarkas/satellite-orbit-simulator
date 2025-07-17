@@ -27,5 +27,5 @@ npm install
 npm run dev
 ```
 
-🔗 Vite will open a local server at http://localhost:5173/ — open it in your browser!
+🔗 Vite will open a local server at http://localhost:5173/ open it in your browser!
 
