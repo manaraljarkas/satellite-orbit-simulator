@@ -9,7 +9,7 @@ A project to simulate the motion of an artificial satellite orbiting Earth using
 1️⃣ **Clone the repository**
 
 ```bash
-git clone https://github.com/<username>/satellite-orbit-simulator.git
+git clone https://github.com/manaraljarkas/satellite-orbit-simulator.git
 ```
 2️⃣ **Navigate to the project folder**
 
