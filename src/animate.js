@@ -1,13 +1,10 @@
-import { renderer, camera, scene } from "./scene.js";
-import { controls } from "./controls.js";
-import { earth } from "./earth.js";
-import { satellite } from "./satellite.js";
+import { renderer, camera, scene } from "./environment/scene.js";
+import { controls } from "./environment/controls.js";
+import { earth } from "./environment/earth.js";
+import { satellite } from "./environment/satellite.js";
+import { ORBIT_RADIUS } from "./physics/constants.js";
 
 let angle = 0;
-
-const EARTH_RADIUS = 10;
-const ORBIT_ALTITUDE = 5;
-const ORBIT_RADIUS = EARTH_RADIUS + ORBIT_ALTITUDE;
 
 export function animate() {
   requestAnimationFrame(animate);
@@ -16,6 +13,7 @@ export function animate() {
 
   if (satellite) {
     angle += 0.005;
+
     satellite.position.x = Math.cos(angle) * ORBIT_RADIUS;
     satellite.position.z = Math.sin(angle) * ORBIT_RADIUS;
   }

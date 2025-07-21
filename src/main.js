@@ -1,4 +1,4 @@
-import { camera, renderer } from "./scene.js";
+import { camera, renderer } from "./environment/scene.js";
 import { animate } from "./animate.js";
 
 // Handle resizing
