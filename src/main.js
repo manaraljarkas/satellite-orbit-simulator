@@ -1,5 +1,6 @@
 import { camera, renderer } from "./environment/scene.js";
 import { animate } from "./animate.js";
+import './gui/gui.js';
 
 // Handle resizing
 window.addEventListener("resize", () => {
