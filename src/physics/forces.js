@@ -25,9 +25,8 @@ function dragForce(position, velocity) {
   // استخدام كثافة الهواء المخصصة من المستخدم أو النموذج الفيزيائي
   let rho = config.userAirDensity || densityAtAltitude(altitude);
 
-  // تكبير بسيط لجعل التأثير واضح في المحاكاة
-  // في الواقع، كثافة الهواء في الفضاء منخفضة جداً
-  rho = rho * 50; // تكبير 50 مرة فقط لجعل التأثير واضح
+  // تكبير أقل لجعل التأثير أكثر توازناً
+  rho = rho * 10; // تكبير 10 مرات فقط (بدلاً من 50)
 
   const v = velocity.length();
   if (v === 0 || rho <= 0) return new THREE.Vector3(0, 0, 0);
@@ -35,7 +34,11 @@ function dragForce(position, velocity) {
   const direction = velocity.clone().normalize().negate();
 
   // معادلة قوة السحب الأساسية: F = ½ × ρ × v² × Cd × A
-  const magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
+  let magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
+
+  // تحديد حد أقصى لقوة السحب لمنع اختفاء القمر فوراً
+  const maxDragForce = 100; // قوة أقصى للسحب
+  magnitude = Math.min(magnitude, maxDragForce);
 
   return direction.multiplyScalar(magnitude);
 }

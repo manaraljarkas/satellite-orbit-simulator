@@ -12,10 +12,10 @@ import { earth } from "./environment/earth.js";
 import { satellite } from "./environment/satellite.js";
 import { renderer, scene } from "./environment/scene.js";
 import { controls } from "./environment/controls.js";
-import { SCALE } from "./physics/constants.js";
+import { SCALE, EARTH_RADIUS } from "./physics/constants.js";
 import { config } from "./physics/config.js";
-
-const dt = config.dt;
+import { createExplosion } from "./environment/explosion.js";
+import { removeSatellite } from "./environment/satellite.js";
 
 export function animate() {
   requestAnimationFrame(animate);
@@ -27,22 +27,38 @@ export function animate() {
   const Fnet = computeTotalForce(state.position, state.velocity);
 
   const acceleration = Fnet.clone().divideScalar(config.satelliteMass);
-  state.velocity.add(acceleration.clone().multiplyScalar(dt));
-  state.position.add(state.velocity.clone().multiplyScalar(dt));
 
-  // === حساب العزوم والدوران (rotational dynamics) ===
-  const torque = computeTorques(state, config);
-  updateAttitude(dt, torque);
+  // تحديث السرعة
+  state.velocity.add(acceleration.clone().multiplyScalar(config.dt));
 
-  // === تحديث الرسم ===
+  // تحديث الموقع
+  state.position.add(state.velocity.clone().multiplyScalar(config.dt));
+
+  // تحديث الرسم مع فحص التصادم
   if (satellite) {
     // موقع القمر
     const scaledPosition = state.position.clone().multiplyScalar(SCALE);
     satellite.position.copy(scaledPosition);
+    satellite.lookAt(new THREE.Vector3(0, 0, 0));
 
-    // اتجاه القمر من الكواترنيون
-    const [q0, q1, q2, q3] = attitude.q; // q0 = w
-    satellite.quaternion.set(q1, q2, q3, q0); // three.js expects (x,y,z,w)
+    // فحص التصادم مع الأرض
+    const distanceFromCenter = scaledPosition.length();
+    const earthVisualRadius = EARTH_RADIUS * 0.6; // نفس scale المستخدم في earth.js
+
+    if (distanceFromCenter <= earthVisualRadius) {
+      console.log('💥 تصادم! القمر الصناعي اصطدم بالأرض');
+
+      // إنشاء انفجار في موقع التصادم
+      createExplosion(scaledPosition, {
+        particleCount: 300,
+        color: 0xff4444,
+        size: 0.3,
+        durationMs: 2000
+      });
+
+      // إزالة القمر الصناعي
+      removeSatellite();
+    }
   }
 
   controls.update();

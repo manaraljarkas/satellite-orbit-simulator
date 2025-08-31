@@ -1,6 +1,12 @@
 export const config = {
   satelliteMass: 500,         // kg
-  initialAltitude: 400e3,     // m ← 400 كم فوق سطح الأرض
+  initialAltitude: 200e3,     // m ← 200 كم فوق سطح الأرض
   enableGravity: true,
-  dt: 1,                      // s ← زمن كل خطوة
+  dt: 1,
+  fuelMass: 10,
+  userDragEnabled: false,
+  userAirDensity: 0.001,      // kg/m³ - قيمة منخفضة واقعية
 };
+
+
+

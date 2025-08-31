@@ -3,6 +3,7 @@
 import { camera, renderer } from "./environment/scene.js";
 import { animate } from "./animate.js";
 import './gui/gui.js';
+import './environment/satellite.js'; // استيراد القمر الصناعي
 
 // Handle resizing
 window.addEventListener("resize", () => {
