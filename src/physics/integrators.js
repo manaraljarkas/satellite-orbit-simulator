@@ -1,16 +1,39 @@
+// integrators.js
 import { attitude } from "./attitude.js";
+import * as THREE from "three";
 
-function normalize(q){
-  const n = Math.hypot(q[0], q[1], q[2], q[3]);
+function normalize(q) {
+  const n = Math.hypot(...q);
   return q.map(v => v / n);
 }
 
-export function updateQuaternion(dt){
-  let [q0,q1,q2,q3] = attitude.q; // q0 = w
-  const [wx,wy,wz] = attitude.omega; // rad/s
+export function updateAttitude(dt, torque) {
+  let [q0, q1, q2, q3] = attitude.q;
+  let [wx, wy, wz] = attitude.omega;
+  const [Ix, Iy, Iz] = attitude.I;
 
-  attitude.omega = [0,0.5,0]
-  // q' = 1/2 * q ⊗ [0, ω]
+  // 1) معادلة أويلر للدوران: I * domega = tau - (omega × (I*omega))
+  const tau = torque; // THREE.Vector3
+  const omegaVec = new THREE.Vector3(wx, wy, wz);
+  const Iomega = new THREE.Vector3(Ix*wx, Iy*wy, Iz*wz);
+  const crossTerm = new THREE.Vector3(
+    omegaVec.y * Iomega.z - omegaVec.z * Iomega.y,
+    omegaVec.z * Iomega.x - omegaVec.x * Iomega.z,
+    omegaVec.x * Iomega.y - omegaVec.y * Iomega.x
+  );
+
+  const domega = new THREE.Vector3(
+    (tau.x - crossTerm.x) / Ix,
+    (tau.y - crossTerm.y) / Iy,
+    (tau.z - crossTerm.z) / Iz
+  );
+
+  // تحديث omega
+  wx += domega.x * dt;
+  wy += domega.y * dt;
+  wz += domega.z * dt;
+
+  // 2) تحديث الكواتيرنيون q
   const dq0 = 0.5 * (-q1*wx - q2*wy - q3*wz);
   const dq1 = 0.5 * ( q0*wx + q2*wz - q3*wy);
   const dq2 = 0.5 * ( q0*wy - q1*wz + q3*wx);
@@ -22,4 +45,5 @@ export function updateQuaternion(dt){
   q3 += dq3 * dt;
 
   attitude.q = normalize([q0,q1,q2,q3]);
+  attitude.omega = [wx, wy, wz];
 }
