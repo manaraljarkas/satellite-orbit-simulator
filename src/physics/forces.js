@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { 
+import {
   G, EARTH_MASS, R_EARTH,
   satelliteArea, dragCoefficient,
   densityAtAltitude
@@ -14,15 +14,32 @@ export function gravitationalForce(position, m) {
   return direction.multiplyScalar(magnitude);
 }
 
-// السحب الجوي
+// السحب الجوي - باستخدام معادلة قوة السحب الأساسية مع تكبير بسيط
 function dragForce(position, velocity) {
+  // التحقق من تفعيل مقاومة الهواء
+  if (!config.userDragEnabled) {
+    return new THREE.Vector3(0, 0, 0);
+  }
+
   const altitude = position.length() - R_EARTH;
-  const rho = densityAtAltitude(altitude);
+  // استخدام كثافة الهواء المخصصة من المستخدم أو النموذج الفيزيائي
+  let rho = config.userAirDensity || densityAtAltitude(altitude);
+
+  // تكبير أقل لجعل التأثير أكثر توازناً
+  rho = rho * 10; // تكبير 10 مرات فقط (بدلاً من 50)
+
   const v = velocity.length();
-  if (v === 0 || rho <= 0) return new THREE.Vector3(0,0,0);
+  if (v === 0 || rho <= 0) return new THREE.Vector3(0, 0, 0);
 
   const direction = velocity.clone().normalize().negate();
-  const magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
+
+  // معادلة قوة السحب الأساسية: F = ½ × ρ × v² × Cd × A
+  let magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
+
+  // تحديد حد أقصى لقوة السحب لمنع اختفاء القمر فوراً
+  const maxDragForce = 100; // قوة أقصى للسحب
+  magnitude = Math.min(magnitude, maxDragForce);
+
   return direction.multiplyScalar(magnitude);
 }
 
@@ -31,14 +48,15 @@ export function computeTotalForce(position, velocity) {
   const Fnet = new THREE.Vector3();
   const totalMass = config.satelliteMass;
 
+  // تطبيق الجاذبية إذا كانت مفعلة
   if (config.enableGravity) {
     const Fg = gravitationalForce(position, totalMass);
     Fnet.add(Fg);
   }
 
+  // تطبيق مقاومة الهواء
   const Fd = dragForce(position, velocity);
   Fnet.add(Fd);
 
-  // لا thrustForce ولا centrifugalForce
   return Fnet;
 }
