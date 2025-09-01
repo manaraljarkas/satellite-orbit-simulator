@@ -37,7 +37,7 @@ function dragForce(position, velocity) {
   let magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
 
   // تحديد حد أقصى لقوة السحب لمنع اختفاء القمر فوراً
-  const maxDragForce = 100; // قوة أقصى للسحب
+  const maxDragForce = config.satelliteMass * 2; // قوة أقصى للسحب
   magnitude = Math.min(magnitude, maxDragForce);
 
   return direction.multiplyScalar(magnitude);
