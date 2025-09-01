@@ -26,13 +26,11 @@ export function resetCollision() {
 export function animate() {
   requestAnimationFrame(animate);
 
+  // دوران الأرض
   earth.rotation.y += 0.001;
 
-  // محصلة القوى
-  const Fnet = computeTotalForce(
-    state.position,
-    state.velocity
-  );
+  // === حساب القوى الخطية (translational dynamics) ===
+  const Fnet = computeTotalForce(state.position, state.velocity);
 
   // تسارع - قانون نيوتن الثاني: a = F/m
   const acceleration = Fnet.clone().divideScalar(config.satelliteMass);
