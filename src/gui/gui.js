@@ -78,6 +78,7 @@ const resetRotController = gui.add({ resetRotation }, 'resetRotation').name('إ�
 
 
 const resetController = gui.add(params, 'resetOrbit').name('إعادة تعيين المدار');
+const resetDefaultsController = gui.add(params, 'resetToDefaults').name('إعادة تعيين القيم الافتراضية');
 
 
 function updateInitialVelocity() {
@@ -91,8 +92,8 @@ function updateInitialVelocity() {
 
 // تخصيص مظهر أزرار التحكم
 const controllers = [massController, altitudeController, velocityController,
-    dtController, gravityController, dragController, , rotationController,
-    resetController, torqueXController, torqueYController, torqueZController, maxWController,
+    dtController, gravityController, dragController, rotationController,
+    resetController, resetDefaultsController, torqueXController, torqueYController, torqueZController, maxWController,
     warnWController, dampingController, resetRotController];
 
 controllers.forEach(controller => {
@@ -143,6 +144,25 @@ if (resetController.domElement) {
     const button = resetController.domElement.querySelector('button');
     if (button) {
         button.style.backgroundColor = '#1c81deff';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.padding = '15px';
+        button.style.borderRadius = '5px';
+        button.style.fontSize = '16px';
+        button.style.fontWeight = 'bold';
+        button.style.cursor = 'pointer';
+        button.style.width = '100%';
+        button.style.textAlign = 'center';
+        button.style.display = 'flex';
+        button.style.alignItems = 'center';
+        button.style.justifyContent = 'center';
+    }
+}
+
+if (resetDefaultsController.domElement) {
+    const button = resetDefaultsController.domElement.querySelector('button');
+    if (button) {
+        button.style.backgroundColor = '#e74c3c';
         button.style.color = 'white';
         button.style.border = 'none';
         button.style.padding = '15px';
