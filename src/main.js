@@ -19,5 +19,5 @@ window.addEventListener("click", () => {
   primeWarningSound();
 }, { once: true });
 
-// Start loop
+
 animate();

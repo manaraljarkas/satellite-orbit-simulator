@@ -1,5 +1,5 @@
 
-// ——— مرجع (اختياري): تأثير انفجار باستخدام نقاط ———
+
 import * as THREE from "three";
 import { scene } from "./scene.js";
 export function createExplosion(position, { particleCount = 200, color = 0xffaa33, size = 0.2, durationMs = 1500 } = {}) {

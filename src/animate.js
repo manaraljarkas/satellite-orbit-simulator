@@ -7,7 +7,7 @@ import { satellite } from "./environment/satellite.js";
 import { renderer, scene } from "./environment/scene.js";
 import { controls } from "./environment/controls.js";
 import { SCALE, EARTH_RADIUS } from "./physics/constants.js";
-import { config } from "./physics/config.js";
+import { config, params } from "./physics/config.js";
 import { createExplosion } from "./environment/explosion.js";
 import { removeSatellite } from "./environment/satellite.js";
 import { computeTorques } from "./physics/torques.js";
@@ -15,19 +15,27 @@ import { updateAttitude } from "./physics/integrators.js";
 import { attitude } from "./physics/attitude.js";
 import { playWarningSound, stopWarningSound } from "./environment/sound.js"; // 🔊
 
+let collisionDetected = false;
+let collisionVelocity = 0;
+
+
+export function resetCollision() {
+  collisionDetected = false;
+  collisionVelocity = 0;
+}
+
 export function animate() {
   requestAnimationFrame(animate);
-
   earth.rotation.y += 0.001;
 
-  // === القوى الخطية ===
   const Fnet = computeTotalForce(state.position, state.velocity);
+
+  // تسارع - قانون نيوتن الثاني: a = F/m
   const acceleration = Fnet.clone().divideScalar(config.satelliteMass);
   state.velocity.add(acceleration.clone().multiplyScalar(config.dt));
   state.position.add(state.velocity.clone().multiplyScalar(config.dt));
 
-  // === تحديث الرسم مع فحص التصادم ===
-  if (satellite) {
+  if (satellite && !collisionDetected) {
     const scaledPosition = state.position.clone().multiplyScalar(SCALE);
     satellite.position.copy(scaledPosition);
 
@@ -68,20 +76,32 @@ export function animate() {
       satellite.lookAt(new THREE.Vector3(0, 0, 0));
     }
 
-    // فحص التصادم مع الأرض
     const distanceFromCenter = scaledPosition.length();
-    const earthVisualRadius = EARTH_RADIUS * 0.6; 
-    if (distanceFromCenter <= earthVisualRadius) {
-      console.log("💥 تصادم! القمر الصناعي اصطدم بالأرض");
+    const earthVisualRadius = EARTH_RADIUS * 0.8; 
 
+    if (distanceFromCenter <= earthVisualRadius) {
+      collisionDetected = true;
+      collisionVelocity = state.velocity.length();
+
+      // حساب طاقة التصادم (KE = ½mv²)
+      const collisionEnergy = 0.5 * config.satelliteMass * collisionVelocity * collisionVelocity;
+      
+      // تحديد حجم الانفجار بناءً على طاقة التصادم
+      const explosionSize = Math.min(Math.max(collisionEnergy / 1e6, 0.1), 2.0);
+      const particleCount = Math.min(Math.max(collisionEnergy / 1e4, 100), 500);
+
+  
       createExplosion(scaledPosition, {
-        particleCount: 300,
+        particleCount: particleCount,
         color: 0xff4444,
-        size: 0.3,
-        durationMs: 2000,
+        size: explosionSize,
+        durationMs: 3000
       });
 
-      removeSatellite();
+      // إزالة القمر الصناعي بعد تأخير قصير
+      setTimeout(() => {
+        removeSatellite();
+      }, 1000);
     }
   }
 

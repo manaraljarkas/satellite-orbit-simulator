@@ -5,7 +5,7 @@ import { SCALE } from "../physics/constants.js";
 
 export let satellite = null;
 
-// دالة إنشاء القمر الصناعي
+
 function createSatellite() {
   const loader = new GLTFLoader();
   loader.load("/models/satellite.glb", (gltf) => {
@@ -18,17 +18,13 @@ function createSatellite() {
   });
 }
 
-// إنشاء القمر الصناعي الأولي
 createSatellite();
 
-// ——— دالة إزالة القمر الصناعي عند الاصطدام ———
 export function removeSatellite() {
   if (!satellite) return;
 
-  console.log('💥 إزالة القمر الصناعي بسبب الاصطدام');
   scene.remove(satellite);
 
-  // محاولة تحرير الموارد لمنع التسريبات
   satellite.traverse((child) => {
     if (child.geometry) {
       child.geometry.dispose();
@@ -45,7 +41,6 @@ export function removeSatellite() {
   satellite = null;
 }
 
-// دالة إعادة إنشاء القمر الصناعي
 export function recreateSatellite() {
   if (satellite) {
     console.log('🛰️ القمر الصناعي موجود بالفعل');
