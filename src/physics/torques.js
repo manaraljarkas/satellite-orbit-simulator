@@ -1,8 +1,6 @@
-// torques.js
 import * as THREE from "three";
 import { computeTotalForce } from "./forces.js";
 
-// دالة الضرب المتجهي
 function cross(a, b) {
   return new THREE.Vector3(
     a.y * b.z - a.z * b.y,
@@ -11,28 +9,31 @@ function cross(a, b) {
   );
 }
 
-//حساب العزوم
 export function computeTorques(state, config) {
-  let totalTorque = new THREE.Vector3();
+  const total = new THREE.Vector3();
 
-  // 1) مثال: عزم السحب الجوي (لو اعتبرنا نقطة التأثير بعيدة شوي عن COM)
+  // 🧪 عزوم تجريبية من الـ GUI
+  if (typeof config.torqueX === "number" ||
+      typeof config.torqueY === "number" ||
+      typeof config.torqueZ === "number") {
+    total.add(new THREE.Vector3(
+      config.torqueX || 0,
+      config.torqueY || 0,
+      config.torqueZ || 0
+    ));
+  }
+
   if (config.enableDragTorque) {
-    const dragOffset = new THREE.Vector3(0, 0.5, 0); // متر، وهمي
-    const Fdrag = computeTotalForce(state.position, state.velocity); // السحب جزء منه
-    totalTorque.add(cross(dragOffset, Fdrag));
+    const dragOffset = new THREE.Vector3(0, 0.5, 0);
+    const Fdrag = computeTotalForce(state.position, state.velocity);
+    total.add(cross(dragOffset, Fdrag));
   }
 
-  // 2) مثال: محرك تصحيحي Thruster
   if (config.enableThruster) {
-    const r = new THREE.Vector3(1, 0, 0); // موقع thruster بالنسبة للـ COM
-    const F = new THREE.Vector3(0, config.thrustForce, 0); // قوة الدفع
-    totalTorque.add(cross(r, F));
+    const r = new THREE.Vector3(1, 0, 0);
+    const F = new THREE.Vector3(0, config.thrustForce || 0, 0);
+    total.add(cross(r, F));
   }
 
-  return totalTorque;
+  return total;
 }
-
-// export function computeTorques(state, config) {
-//   // تجربة: عزم ثابت حول المحور Y
-//   return new THREE.Vector3(0, 1e-2, 0);
-// }

@@ -2,6 +2,7 @@ import GUI from 'lil-gui';
 import { config, params } from '../physics/config.js';
 import { state } from '../physics/state.js';
 import { R_EARTH } from "../physics/constants.js";
+import { resetRotation } from "../physics/integrators.js";
 const gui = new GUI();
 gui.title('لوحة التحكم');
 
@@ -67,6 +68,20 @@ airDensityController.onChange(() => {
 
 });
 
+
+
+const torqueXController = gui.add(params, 'torqueX', -0.05, 0.05).step(0.001).name('عزم X');
+const torqueYController = gui.add(params, 'torqueY', -0.05, 0.05).step(0.001).name('عزم Y');
+const torqueZController = gui.add(params, 'torqueZ', -0.05, 0.05).step(0.001).name('عزم Z');
+
+const maxWController = gui.add(params, 'maxAngularSpeed', 0.1, 10).step(0.1).name('السرعة الزاوية القصوى');
+const warnWController = gui.add(params, 'warningAngularSpeed', 0.1, 10).step(0.1).name('عتبة الإنذار');
+const rotationController = gui.add(params, 'enableRotation').name('تفعيل دوران القمر حول نفسه');
+const dampingController = gui.add(config, 'dampingEnabled').name('تفعيل التخميد');
+const resetRotController = gui.add({ resetRotation }, 'resetRotation').name('إعادة ضبط الدوران');
+
+
+
 const resetController = gui.add(params, 'resetOrbit').name('إعادة تعيين المدار');
 
 
@@ -81,7 +96,9 @@ function updateInitialVelocity() {
 
 // تخصيص مظهر أزرار التحكم
 const controllers = [massController, altitudeController, velocityController,
-    dtController, gravityController, dragController, airDensityController, resetController];
+    dtController, gravityController, dragController, airDensityController,rotationController,
+    resetController,torqueXController,torqueYController,torqueZController,maxWController,
+    warnWController,dampingController,resetRotController];
 
 controllers.forEach(controller => {
     if (controller.domElement) {
@@ -130,17 +147,42 @@ if (velocityController.domElement) {
 if (resetController.domElement) {
     const button = resetController.domElement.querySelector('button');
     if (button) {
-        button.style.backgroundColor = '#e74c3c';
+        button.style.backgroundColor = '#1c81deff';
         button.style.color = 'white';
         button.style.border = 'none';
-        button.style.padding = '10px 20px';
+        button.style.padding = '15px';
         button.style.borderRadius = '5px';
         button.style.fontSize = '16px';
         button.style.fontWeight = 'bold';
         button.style.cursor = 'pointer';
         button.style.width = '100%';
+        button.style.textAlign = 'center';
+        button.style.display = 'flex';
+        button.style.alignItems = 'center';
+        button.style.justifyContent = 'center';
     }
 }
+
+if (resetRotController.domElement) {
+  const button = resetRotController.domElement.querySelector('button');
+  if (button) {
+    button.style.backgroundColor = '#08be4eff';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.padding = '15px';
+    button.style.borderRadius = '5px';
+    button.style.fontSize = '16px';
+    button.style.fontWeight = 'bold';
+    button.style.cursor = 'pointer';
+    button.style.width = '100%';
+    button.style.textAlign = 'center';
+    button.style.display = 'flex';
+    button.style.alignItems = 'center';
+    button.style.justifyContent = 'center';
+  }
+}
+
+
 
 
 
