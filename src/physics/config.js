@@ -2,7 +2,7 @@ import { G, EARTH_MASS, R_EARTH } from "./constants.js";
 import { state } from "./state.js";
 import { recreateSatellite } from "../environment/satellite.js";
 import { resetCollision } from "../animate.js";
-
+import { drawInitialOrbit } from "../environment/orbitPath.js";
 
 export const config = {
   satelliteMass: 500,         
@@ -34,7 +34,7 @@ export const params = {
     resetSatelliteOrbit();
     resetCollision();
     recreateSatellite();
-
+    drawInitialOrbit();
   },
 };
 

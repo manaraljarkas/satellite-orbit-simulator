@@ -22,7 +22,7 @@ if (titleElement) {
     titleElement.style.marginBottom = '15px';
 }
 
-const altitudeController = gui.add(params, 'altitudeKm', 0, 2000).step(10).name('الارتفاع (كم)');
+const altitudeController = gui.add(params, 'altitudeKm', 0, 5000).step(10).name('الارتفاع (كم)');
 altitudeController.onChange(() => {
     config.initialAltitude = params.altitudeKm * 1000;
 

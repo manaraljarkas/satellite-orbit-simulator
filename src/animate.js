@@ -12,15 +12,22 @@ import { SCALE, EARTH_RADIUS } from "./physics/constants.js";
 import { config, params } from "./physics/config.js";
 import { createExplosion } from "./environment/explosion.js";
 import { removeSatellite } from "./environment/satellite.js";
-
+import { drawInitialOrbit } from "./environment/orbitPath.js";
 let collisionDetected = false;
 let collisionVelocity = 0;
+// let trajectoryPoints = [];
+// let trajectoryLine = null;
 
 
 export function resetCollision() {
   collisionDetected = false;
   collisionVelocity = 0;
 }
+// const trajectoryPoints = [];
+// const trajectoryGeometry = new THREE.BufferGeometry().setFromPoints(trajectoryPoints);
+// const trajectoryMaterial = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
+// const trajectoryLine = new THREE.Line(trajectoryGeometry, trajectoryMaterial);
+// scene.add(trajectoryLine);
 
 export function animate() {
   requestAnimationFrame(animate);
@@ -41,6 +48,27 @@ export function animate() {
     const scaledPosition = state.position.clone().multiplyScalar(SCALE);
     satellite.position.copy(scaledPosition);
     satellite.lookAt(new THREE.Vector3(0, 0, 0));
+    // trajectoryPoints.push(scaledPosition.clone());
+
+    // // تحديد أقصى طول للمسار (مثلاً 2000 نقطة)
+    // if (trajectoryPoints.length > 2000) {
+    //   trajectoryPoints.shift();
+    // }
+    
+    // // لو في خط قديم احذفه
+    // if (trajectoryLine) {
+    //   scene.remove(trajectoryLine);
+    //   trajectoryLine.geometry.dispose(); // تخلّص من الذاكرة
+    //   trajectoryLine.material.dispose();
+    // }
+    
+    // // إنشاء خط جديد من النقاط الحالية
+    // const trajectoryGeometry = new THREE.BufferGeometry().setFromPoints(trajectoryPoints);
+    // const trajectoryMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });
+    // trajectoryLine = new THREE.Line(trajectoryGeometry, trajectoryMaterial);
+    // scene.add(trajectoryLine);
+
+    // drawInitialOrbit();
 
     const distanceFromCenter = scaledPosition.length();
     const earthVisualRadius = EARTH_RADIUS * 0.8; 

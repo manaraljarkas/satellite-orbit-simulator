@@ -14,26 +14,31 @@ export function gravitationalForce(position, m) {
 }
 
 function dragForce(position, velocity) {
-
   if (!config.userDragEnabled) {
     return new THREE.Vector3(0, 0, 0);
   }
 
   const altitude = position.length() - R_EARTH;
-  let rho = config.userAirDensity || densityAtAltitude(altitude);
 
-  
-  rho = rho * 10; 
+  // الكثافة الحقيقية حسب الارتفاع
+  let rho = densityAtAltitude(altitude);
+
+  // مضاعف من المستخدم (0.001 يعني سحب ضعيف جداً, 2 يعني سحب قوي جداً)
+  rho *= config.userAirDensity;  
 
   const v = velocity.length();
   if (v === 0 || rho <= 0) return new THREE.Vector3(0, 0, 0);
 
   const direction = velocity.clone().normalize().negate();
 
-  // معادلة قوة السحب الأساسية: F = ½ × ρ × v² × Cd × A
+  // معادلة السحب
   let magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
-  const maxDragForce = config.satelliteMass * 2;   
-  magnitude = Math.min(magnitude, maxDragForce);
+
+  // ❌ لا تعمل clamp كبير مثل قبل
+  // ✅ بس اعمل safeguard صغير ضد الأرقام الضخمة جداً
+  if (magnitude > config.satelliteMass * 100) {
+    magnitude = config.satelliteMass * 100;
+  }
 
   return direction.multiplyScalar(magnitude);
 }
