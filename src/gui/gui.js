@@ -2,6 +2,7 @@ import GUI from 'lil-gui';
 import { config, params } from '../physics/config.js';
 import { state } from '../physics/state.js';
 import { R_EARTH } from "../physics/constants.js";
+import { resetRotation } from "../physics/integrators.js";
 const gui = new GUI();
 gui.title('لوحة التحكم');
 
@@ -76,10 +77,7 @@ const torqueZController = gui.add(params, 'torqueZ', -0.05, 0.05).step(0.001).na
 const maxWController = gui.add(params, 'maxAngularSpeed', 0.1, 10).step(0.1).name('السرعة الزاوية القصوى');
 const warnWController = gui.add(params, 'warningAngularSpeed', 0.1, 10).step(0.1).name('عتبة الإنذار');
 const rotationController = gui.add(params, 'enableRotation').name('تفعيل دوران القمر حول نفسه');
-// ✅ زر تفعيل التخميد
 const dampingController = gui.add(config, 'dampingEnabled').name('تفعيل التخميد');
-
-// ✅ زر إعادة ضبط الدوران
 const resetRotController = gui.add({ resetRotation }, 'resetRotation').name('إعادة ضبط الدوران');
 
 
@@ -168,7 +166,7 @@ if (resetController.domElement) {
 if (resetRotController.domElement) {
   const button = resetRotController.domElement.querySelector('button');
   if (button) {
-    button.style.backgroundColor = '#08be4eff'; // لون مختلف لتمييزه
+    button.style.backgroundColor = '#08be4eff';
     button.style.color = 'white';
     button.style.border = 'none';
     button.style.padding = '15px';
