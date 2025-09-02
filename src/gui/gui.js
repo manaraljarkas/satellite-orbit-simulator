@@ -1,16 +1,16 @@
 import GUI from 'lil-gui';
 import { config, params } from '../physics/config.js';
 import { state } from '../physics/state.js';
-
+import { R_EARTH } from "../physics/constants.js";
 const gui = new GUI();
 gui.title('لوحة التحكم');
 
-// تكبير لوحة التحكم
+
 gui.domElement.style.fontSize = '16px';
 gui.domElement.style.width = '250px';
 gui.domElement.style.minWidth = '250px';
 
-// تخصيص مظهر لوحة التحكم
+
 const titleElement = gui.domElement.querySelector('.title');
 if (titleElement) {
     titleElement.style.fontSize = '20px';
@@ -22,20 +22,13 @@ if (titleElement) {
     titleElement.style.marginBottom = '15px';
 }
 
-// إنشاء عناصر التحكم مع ربطها مع config
-const massController = gui.add(params, 'mass', 1, 5500).step(1).name('كتلة القمر الصناعي');
-massController.onChange(() => {
-    config.satelliteMass = params.mass;
-    console.log('✅ تم تحديث كتلة القمر:', params.mass, 'kg');
-});
-
 const altitudeController = gui.add(params, 'altitudeKm', 0, 2000).step(10).name('الارتفاع (كم)');
 altitudeController.onChange(() => {
     config.initialAltitude = params.altitudeKm * 1000;
 
 });
 
-// إنشاء قائمة منسدلة لمعامل السرعة
+
 const velocityOptions = { '0.1': 0.1, '1.0': 1.0, '1.2 ': 1.2, '2.0': 2.0 };
 const velocityController = gui.add(params, 'velocityFactor', velocityOptions).name('🚀 معامل السرعة');
 velocityController.onChange(() => {
@@ -50,6 +43,12 @@ dtController.onChange(() => {
    
 });
 
+const massController = gui.add(params, 'mass', 1, 5500).step(1).name('كتلة القمر الصناعي');
+massController.onChange(() => {
+    config.satelliteMass = params.mass;
+    
+});
+
 const gravityController = gui.add(params, 'gravityEnabled').name('تفعيل الجاذبية');
 gravityController.onChange(() => {
     config.enableGravity = params.gravityEnabled;
@@ -59,32 +58,24 @@ gravityController.onChange(() => {
 const dragController = gui.add(params, 'userDragEnabled').name('تفعيل مقاومة الهواء');
 dragController.onChange(() => {
     config.userDragEnabled = params.userDragEnabled;
-  
+
 });
 
 const airDensityController = gui.add(params, 'userAirDensity', 0.001, 2.0).step(0.01).name('كثافة الهواء');
 airDensityController.onChange(() => {
     config.userAirDensity = params.userAirDensity;
-   
+
 });
 
 const resetController = gui.add(params, 'resetOrbit').name('إعادة تعيين المدار');
 
-// دالة لتحديث السرعة الأولية بناءً على معامل السرعة
+
 function updateInitialVelocity() {
     const r = state.position.length();
-    if (r > 6371000) { // R_EARTH
-        // حساب السرعة المدارية الدائرية
+    if (r > R_EARTH) { 
         const circularVelocity = Math.sqrt(6.67430e-11 * 5.972e24 / r);
-        // تطبيق معامل السرعة
         const newVelocity = circularVelocity * params.velocityFactor;
         state.velocity.set(0, 0, newVelocity);
-
-
-        // تحديد نوع المدار
-        let orbitType = 'غير محدد';
-        let orbitDescription = '';
-      
     }
 }
 
@@ -110,7 +101,7 @@ controllers.forEach(controller => {
     }
 });
 
-// تخصيص مظهر أزرار الرقم
+
 [massController, altitudeController, dtController, airDensityController].forEach(controller => {
     if (controller.domElement) {
         const slider = controller.domElement.querySelector('input[type="range"]');
@@ -126,7 +117,6 @@ controllers.forEach(controller => {
     }
 });
 
-// تخصيص مظهر القائمة المنسدلة
 if (velocityController.domElement) {
     const select = velocityController.domElement.querySelector('select');
     if (select) {
@@ -136,7 +126,7 @@ if (velocityController.domElement) {
     }
 }
 
-// تخصيص زر إعادة التعيين
+
 if (resetController.domElement) {
     const button = resetController.domElement.querySelector('button');
     if (button) {
