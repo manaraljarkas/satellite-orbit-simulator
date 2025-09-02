@@ -5,8 +5,8 @@ import { resetCollision } from "../animate.js";
 import { drawInitialOrbit } from "../environment/orbitPath.js";
 
 export const config = {
-  satelliteMass: 500,         
-  initialAltitude: 200e3,    
+  satelliteMass: 500,
+  initialAltitude: 200e3,
   enableGravity: true,
   dt: 1,
   userDragEnabled: false,
@@ -22,14 +22,14 @@ export const config = {
   enableDragTorque: false,
   enableThruster: false,
   dampingEnabled: false,
-  thrustForce: 0,  
+  thrustForce: 0,
 };
 
 
 export const params = {
   mass: 500,
   altitudeKm: 200,
-  velocityFactor: 1.0,        
+  velocityFactor: 1.0,
   dt: 1,
   gravityEnabled: true,
   userDragEnabled: false,
@@ -43,7 +43,7 @@ export const params = {
   maxAngularSpeed: 4,
   warningAngularSpeed: 3,
 
-  
+
   resetOrbit: () => {
     config.satelliteMass = params.mass;
     config.initialAltitude = params.altitudeKm * 1000;

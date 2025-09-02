@@ -14,34 +14,35 @@ export function gravitationalForce(position, m) {
 }
 
 function dragForce(position, velocity) {
+
   if (!config.userDragEnabled) {
     return new THREE.Vector3(0, 0, 0);
   }
 
   const altitude = position.length() - R_EARTH;
 
-  // الكثافة الحقيقية حسب الارتفاع
-  let rho = densityAtAltitude(altitude);
+  // مقاومة الهواء تعمل فقط إذا الارتفاع ≤ 500 كم
+  if (altitude > 500000) { // 500 كم = 500,000 متر
+    return new THREE.Vector3(0, 0, 0);
+  }
 
-  // مضاعف من المستخدم (0.001 يعني سحب ضعيف جداً, 2 يعني سحب قوي جداً)
-  rho *= config.userAirDensity;  
+  let rho = config.userAirDensity || densityAtAltitude(altitude);
 
   const v = velocity.length();
   if (v === 0 || rho <= 0) return new THREE.Vector3(0, 0, 0);
 
   const direction = velocity.clone().normalize().negate();
 
-  // معادلة السحب
+  // معادلة قوة السحب الأساسية: F = ½ × ρ × v² × Cd × A
   let magnitude = 0.5 * rho * v * v * satelliteArea * dragCoefficient;
 
-  // ❌ لا تعمل clamp كبير مثل قبل
-  // ✅ بس اعمل safeguard صغير ضد الأرقام الضخمة جداً
-  if (magnitude > config.satelliteMass * 100) {
-    magnitude = config.satelliteMass * 100;
-  }
+  // تحديد حد أقصى لقوة السحب لمنع اختفاء القمر فوراً
+  const maxDragForce = config.satelliteMass * 2; // قوة أقصى للسحب
+  magnitude = Math.min(magnitude, maxDragForce);
 
   return direction.multiplyScalar(magnitude);
 }
+
 
 // محصلة القوى
 export function computeTotalForce(position, velocity) {

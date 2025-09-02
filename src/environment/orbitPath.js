@@ -21,12 +21,12 @@ export function drawInitialOrbit() {
 
   for (let i = 0; i <= steps; i++) {
     const angle = (i / steps) * 2 * Math.PI;
-  
+
     // دوران حول محور x–z
     const x = r * Math.cos(angle);
     const y = 0;
     const z = r * Math.sin(angle);
-  
+
     points.push(new THREE.Vector3(x, y, z).multiplyScalar(SCALE));
   }
 

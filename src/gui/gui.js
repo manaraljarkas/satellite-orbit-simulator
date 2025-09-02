@@ -35,25 +35,25 @@ const velocityController = gui.add(params, 'velocityFactor', velocityOptions).na
 velocityController.onChange(() => {
     // تحديث السرعة الأولية بناءً على معامل السرعة
     updateInitialVelocity();
-    
+
 });
 
 const dtController = gui.add(params, 'dt', 0.1, 10).step(0.1).name('خطوة الوقت');
 dtController.onChange(() => {
     config.dt = params.dt;
-   
+
 });
 
 const massController = gui.add(params, 'mass', 1, 5500).step(1).name('كتلة القمر الصناعي');
 massController.onChange(() => {
     config.satelliteMass = params.mass;
-    
+
 });
 
 const gravityController = gui.add(params, 'gravityEnabled').name('تفعيل الجاذبية');
 gravityController.onChange(() => {
     config.enableGravity = params.gravityEnabled;
-  
+
 });
 
 const dragController = gui.add(params, 'userDragEnabled').name('تفعيل مقاومة الهواء');
@@ -62,11 +62,6 @@ dragController.onChange(() => {
 
 });
 
-const airDensityController = gui.add(params, 'userAirDensity', 0.001, 2.0).step(0.01).name('كثافة الهواء');
-airDensityController.onChange(() => {
-    config.userAirDensity = params.userAirDensity;
-
-});
 
 
 
@@ -87,7 +82,7 @@ const resetController = gui.add(params, 'resetOrbit').name('إعادة تعيي�
 
 function updateInitialVelocity() {
     const r = state.position.length();
-    if (r > R_EARTH) { 
+    if (r > R_EARTH) {
         const circularVelocity = Math.sqrt(6.67430e-11 * 5.972e24 / r);
         const newVelocity = circularVelocity * params.velocityFactor;
         state.velocity.set(0, 0, newVelocity);
@@ -96,9 +91,9 @@ function updateInitialVelocity() {
 
 // تخصيص مظهر أزرار التحكم
 const controllers = [massController, altitudeController, velocityController,
-    dtController, gravityController, dragController, airDensityController,rotationController,
-    resetController,torqueXController,torqueYController,torqueZController,maxWController,
-    warnWController,dampingController,resetRotController];
+    dtController, gravityController, dragController, , rotationController,
+    resetController, torqueXController, torqueYController, torqueZController, maxWController,
+    warnWController, dampingController, resetRotController];
 
 controllers.forEach(controller => {
     if (controller.domElement) {
@@ -119,7 +114,7 @@ controllers.forEach(controller => {
 });
 
 
-[massController, altitudeController, dtController, airDensityController].forEach(controller => {
+[massController, altitudeController, dtController].forEach(controller => {
     if (controller.domElement) {
         const slider = controller.domElement.querySelector('input[type="range"]');
         if (slider) {
@@ -164,22 +159,22 @@ if (resetController.domElement) {
 }
 
 if (resetRotController.domElement) {
-  const button = resetRotController.domElement.querySelector('button');
-  if (button) {
-    button.style.backgroundColor = '#08be4eff';
-    button.style.color = 'white';
-    button.style.border = 'none';
-    button.style.padding = '15px';
-    button.style.borderRadius = '5px';
-    button.style.fontSize = '16px';
-    button.style.fontWeight = 'bold';
-    button.style.cursor = 'pointer';
-    button.style.width = '100%';
-    button.style.textAlign = 'center';
-    button.style.display = 'flex';
-    button.style.alignItems = 'center';
-    button.style.justifyContent = 'center';
-  }
+    const button = resetRotController.domElement.querySelector('button');
+    if (button) {
+        button.style.backgroundColor = '#08be4eff';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.padding = '15px';
+        button.style.borderRadius = '5px';
+        button.style.fontSize = '16px';
+        button.style.fontWeight = 'bold';
+        button.style.cursor = 'pointer';
+        button.style.width = '100%';
+        button.style.textAlign = 'center';
+        button.style.display = 'flex';
+        button.style.alignItems = 'center';
+        button.style.justifyContent = 'center';
+    }
 }
 
 

@@ -57,14 +57,14 @@ export function animate() {
     // if (trajectoryPoints.length > 2000) {
     //   trajectoryPoints.shift();
     // }
-    
+
     // // لو في خط قديم احذفه
     // if (trajectoryLine) {
     //   scene.remove(trajectoryLine);
     //   trajectoryLine.geometry.dispose(); // تخلّص من الذاكرة
     //   trajectoryLine.material.dispose();
     // }
-    
+
     // // إنشاء خط جديد من النقاط الحالية
     // const trajectoryGeometry = new THREE.BufferGeometry().setFromPoints(trajectoryPoints);
     // const trajectoryMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });
@@ -88,7 +88,7 @@ export function animate() {
       );
 
       // افتراضات آمنة للقيم
-      const maxW  = (typeof config.maxAngularSpeed === "number") ? config.maxAngularSpeed : Infinity;
+      const maxW = (typeof config.maxAngularSpeed === "number") ? config.maxAngularSpeed : Infinity;
       const warnW = (typeof config.warningAngularSpeed === "number") ? config.warningAngularSpeed : Infinity;
 
       // حد السرعة القصوى
@@ -113,7 +113,7 @@ export function animate() {
 
 
     const distanceFromCenter = scaledPosition.length();
-    const earthVisualRadius = EARTH_RADIUS * 0.8; 
+    const earthVisualRadius = EARTH_RADIUS * 0.8;
 
     if (distanceFromCenter <= earthVisualRadius) {
       collisionDetected = true;
@@ -121,12 +121,12 @@ export function animate() {
 
       // حساب طاقة التصادم (KE = ½mv²)
       const collisionEnergy = 0.5 * config.satelliteMass * collisionVelocity * collisionVelocity;
-      
+
       // تحديد حجم الانفجار بناءً على طاقة التصادم
       const explosionSize = Math.min(Math.max(collisionEnergy / 1e6, 0.1), 2.0);
       const particleCount = Math.min(Math.max(collisionEnergy / 1e4, 100), 500);
 
-  
+
       createExplosion(scaledPosition, {
         particleCount: particleCount,
         color: 0xff4444,
@@ -137,6 +137,10 @@ export function animate() {
       // إزالة القمر الصناعي بعد تأخير قصير
       setTimeout(() => {
         removeSatellite();
+        // إعادة تعيين تلقائية بعد الانفجار
+        setTimeout(() => {
+          params.resetOrbit();
+        }, 2000);
       }, 1000);
     }
   }
