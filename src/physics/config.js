@@ -65,9 +65,7 @@ export const params = {
     drawInitialOrbit();
   },
 
-  // دالة إعادة تعيين جميع القيم إلى الافتراضية
   resetToDefaults: () => {
-    // إعادة تعيين جميع القيم إلى الافتراضية
     params.mass = 500;
     params.altitudeKm = 200;
     params.velocityFactor = 1.0;
@@ -84,7 +82,6 @@ export const params = {
     params.maxAngularSpeed = 4;
     params.warningAngularSpeed = 3;
 
-    // تحديث config
     config.satelliteMass = params.mass;
     config.initialAltitude = params.altitudeKm * 1000;
     config.dt = params.dt;
@@ -100,15 +97,12 @@ export const params = {
     config.maxAngularSpeed = params.maxAngularSpeed;
     config.warningAngularSpeed = params.warningAngularSpeed;
 
-    // إعادة تعيين المدار
     resetSatelliteOrbit();
     resetCollision();
     recreateSatellite();
     drawInitialOrbit();
 
-    // تحديث واجهة المستخدم
     setTimeout(() => {
-      // إعادة تحميل الصفحة لتحديث واجهة المستخدم
       window.location.reload();
     }, 500);
   },

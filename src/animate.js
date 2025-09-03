@@ -21,19 +21,14 @@ import { playWarningSound, stopWarningSound } from "./environment/sound.js"; // 
 
 let collisionDetected = false;
 let collisionVelocity = 0;
-// let trajectoryPoints = [];
-// let trajectoryLine = null;
+
 
 
 export function resetCollision() {
   collisionDetected = false;
   collisionVelocity = 0;
 }
-// const trajectoryPoints = [];
-// const trajectoryGeometry = new THREE.BufferGeometry().setFromPoints(trajectoryPoints);
-// const trajectoryMaterial = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
-// const trajectoryLine = new THREE.Line(trajectoryGeometry, trajectoryMaterial);
-// scene.add(trajectoryLine);
+
 
 export function animate() {
   requestAnimationFrame(animate);
@@ -51,28 +46,6 @@ export function animate() {
     satellite.position.copy(scaledPosition);
 
     satellite.lookAt(new THREE.Vector3(0, 0, 0));
-    // trajectoryPoints.push(scaledPosition.clone());
-
-    // // تحديد أقصى طول للمسار (مثلاً 2000 نقطة)
-    // if (trajectoryPoints.length > 2000) {
-    //   trajectoryPoints.shift();
-    // }
-
-    // // لو في خط قديم احذفه
-    // if (trajectoryLine) {
-    //   scene.remove(trajectoryLine);
-    //   trajectoryLine.geometry.dispose(); // تخلّص من الذاكرة
-    //   trajectoryLine.material.dispose();
-    // }
-
-    // // إنشاء خط جديد من النقاط الحالية
-    // const trajectoryGeometry = new THREE.BufferGeometry().setFromPoints(trajectoryPoints);
-    // const trajectoryMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });
-    // trajectoryLine = new THREE.Line(trajectoryGeometry, trajectoryMaterial);
-    // scene.add(trajectoryLine);
-
-    // drawInitialOrbit();
-
 
     if (config.enableRotation) {
       // 🌀 تفعيل الدوران بالكواترنيونات

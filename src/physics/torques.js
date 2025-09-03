@@ -12,7 +12,6 @@ function cross(a, b) {
 export function computeTorques(state, config) {
   const total = new THREE.Vector3();
 
-  // 🧪 عزوم تجريبية من الـ GUI
   if (typeof config.torqueX === "number" ||
       typeof config.torqueY === "number" ||
       typeof config.torqueZ === "number") {
