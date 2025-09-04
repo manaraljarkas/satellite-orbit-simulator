@@ -162,7 +162,7 @@ if (resetController.domElement) {
 if (resetDefaultsController.domElement) {
     const button = resetDefaultsController.domElement.querySelector('button');
     if (button) {
-        button.style.backgroundColor = '#e74c3c';
+        button.style.backgroundColor = '#ff8400ff';
         button.style.color = 'white';
         button.style.border = 'none';
         button.style.padding = '15px';
