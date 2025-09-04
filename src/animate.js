@@ -10,13 +10,10 @@ import { SCALE, EARTH_RADIUS } from "./physics/constants.js";
 import { config, params } from "./physics/config.js";
 import { createExplosion } from "./environment/explosion.js";
 import { removeSatellite } from "./environment/satellite.js";
-
-import { drawInitialOrbit } from "./environment/orbitPath.js";
-
 import { computeTorques } from "./physics/torques.js";
 import { updateAttitude } from "./physics/integrators.js";
 import { attitude } from "./physics/attitude.js";
-import { playWarningSound, stopWarningSound } from "./environment/sound.js"; // 🔊
+import { playWarningSound, stopWarningSound } from "./environment/sound.js";
 
 
 let collisionDetected = false;
